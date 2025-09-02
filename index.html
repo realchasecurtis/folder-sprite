@@ -13,27 +13,21 @@
     }
 
     .icon {
-      width: 100%;                /* responsive width */
-      max-width: 498px;           /* scale relative to container */
-      aspect-ratio: 498 / 300;    /* keep correct proportions */
+      width: 100%;
+      max-width: 498px;
+      aspect-ratio: 498 / 300;
       background: url("folder-sprite.png") no-repeat bottom left;
-      background-size: 500% 100%; /* 5 frames across → scale bg to 500% */
+      background-size: 500% 100%; /* 5 frames across */
       cursor: pointer;
-    }
-
-    /* Default: closed (frame 1) */
-    .icon.frame1 { background-position: 0% 0; }
-
-    /* Each frame step */
-    .icon.frame2 { background-position: -25% 0; }
-    .icon.frame3 { background-position: -50% 0; }
-    .icon.frame4 { background-position: -75% 0; }
-    .icon.frame5 { background-position: -100% 0; }
-
-    /* Smooth stepping effect */
-    .icon {
       transition: background-position 0.15s steps(1);
     }
+
+    /* Corrected frame positions */
+    .icon.frame1 { background-position:   0% 0; }
+    .icon.frame2 { background-position:  25% 0; }
+    .icon.frame3 { background-position:  50% 0; }
+    .icon.frame4 { background-position:  75% 0; }
+    .icon.frame5 { background-position: 100% 0; }
   </style>
 </head>
 <body>
@@ -45,11 +39,14 @@
 
     folder.addEventListener("click", () => {
       if (!isOpen) {
-        // Animate forward
+        // Animate forward, then redirect
         folder.className = "icon frame2";
         setTimeout(() => folder.className = "icon frame3", 150);
         setTimeout(() => folder.className = "icon frame4", 300);
-        setTimeout(() => folder.className = "icon frame5", 450);
+        setTimeout(() => {
+          folder.className = "icon frame5";
+          window.location.href = "https://forgebunker.com"; // Redirect here
+        }, 450);
         isOpen = true;
       } else {
         // Animate backward
