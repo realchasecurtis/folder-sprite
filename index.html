@@ -13,16 +13,26 @@
       margin: 0;
     }
 
-    .icon {
-      width: 100%;           /* make it responsive */
-      max-width: 300px;      /* cap it for desktop */
-      aspect-ratio: 525 / 400; /* keeps frame ratio */
-      background: url("folder-sprite.png") no-repeat 0 0 / cover;
-      cursor: pointer;
-      overflow: hidden;
+    /* Wrapper for responsive scaling */
+    .icon-wrapper {
+      width: 80vw;           /* responsive width */
+      max-width: 300px;      /* cap on desktop */
+      aspect-ratio: 525 / 400; /* keeps shape */
     }
 
-    /* Frame positions (kept the same) */
+    .icon {
+      width: 525px;   /* actual frame width */
+      height: 400px;  /* actual frame height */
+      background: url("folder-sprite.png") no-repeat 0 0;
+      cursor: pointer;
+      overflow: hidden;
+
+      /* Scale down to fit wrapper */
+      transform-origin: top left;
+      transform: scale(var(--icon-scale, 1));
+    }
+
+    /* Frames with fixed pixel offsets (still work) */
     .frame1 { background-position:    0px 0; }
     .frame2 { background-position: -575px 0; }
     .frame3 { background-position: -1150px 0; }
@@ -31,10 +41,13 @@
   </style>
 </head>
 <body>
-  <div class="icon frame1" id="folder"></div>
+  <div class="icon-wrapper">
+    <div class="icon frame1" id="folder"></div>
+  </div>
 
   <script>
     const folder = document.getElementById("folder");
+    const wrapper = folder.parentElement;
     const frames = ["frame1", "frame2", "frame3", "frame4", "frame5"];
     let animating = false;
 
@@ -58,10 +71,20 @@
       }, 40);
     }
 
-    folder.addEventListener("mouseenter", () => animateFrames(true));
-    folder.addEventListener("mouseleave", () => animateFrames(false));
+    // Responsive scaling: calculate scale based on wrapper size
+    function resizeIcon() {
+      const scale = wrapper.clientWidth / 525;
+      folder.style.setProperty("--icon-scale", scale);
+    }
 
-    // Force proper redirect
+    window.addEventListener("resize", resizeIcon);
+    resizeIcon(); // run once on load
+
+    // Hover → open
+    folder.addEventListener("mouseenter", () => animateFrames(true));
+    // Hover out → close
+    folder.addEventListener("mouseleave", () => animateFrames(false));
+    // Click → redirect (works on mobile)
     folder.addEventListener("click", () => {
       window.open("https://halo.forgebunker.com", "_self");
     });
