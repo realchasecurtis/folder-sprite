@@ -13,15 +13,15 @@
     }
 
     .icon {
-      width: 525px;   /* exact frame width */
-      height: 400px;  /* exact frame height */
+      width: 525px;   /* single frame width */
+      height: 400px;  /* single frame height */
       background: url("folder-sprite.png") no-repeat 0 0;
-      /* don’t stretch sprite, use its natural width */
+      /* Don’t scale — use the PNG’s actual pixel dimensions */
       cursor: pointer;
       overflow: hidden;
     }
 
-    /* Frame positions (stride = 575px) */
+    /* Correct pixel offsets (stride = 575px) */
     .frame1 { background-position:    0px 0; }
     .frame2 { background-position: -575px 0; }
     .frame3 { background-position: -1150px 0; }
@@ -54,12 +54,16 @@
           clearInterval(interval);
           animating = false;
         }
-      }, 40); // 40ms per frame ≈ 160ms total
+      }, 40); // 40ms per frame → ~160ms total
     }
 
+    // Hover → open
     folder.addEventListener("mouseenter", () => animateFrames(true));
+
+    // Hover out → close
     folder.addEventListener("mouseleave", () => animateFrames(false));
 
+    // Click → redirect
     folder.addEventListener("click", () => {
       window.location.href = "https://forgebunker.com";
     });
