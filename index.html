@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Folder Animation</title>
+  <title>Folder Sprite</title>
   <style>
     body {
       background: #111;
@@ -13,53 +13,67 @@
       margin: 0;
     }
 
-    .icon {
-      width: min(40vw, 525px);   /* responsive, capped at native width */
-      aspect-ratio: 525 / 400;   /* keep proportions */
-      background: url("folder-sprite.png") no-repeat 0 0;
-      background-size: 500% 100%; /* 5 frames across → 500% */
+    .sprite {
+      width: 100%;
+      max-width: 525px;   /* keeps desktop sane */
+      aspect-ratio: 525 / 400;
+      background: url("folder-sprite.png") 0 0 no-repeat;
+      background-size: cover;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div class="icon" id="folder"></div>
+  <div class="sprite" id="folder"></div>
 
   <script>
-    const folder = document.getElementById("folder");
-    const totalFrames = 5;
+    const sprite = document.getElementById("folder");
+
+    const frameWidth = 525;
+    const frameCount = 5;
+    const duration = 200; // ms for full animation
+
+    let currentFrame = 0;
     let animating = false;
 
-    function setFrame(index) {
-      const percent = -(100 / (totalFrames - 1)) * index;
-      folder.style.backgroundPosition = `${percent}% 0`;
+    function setFrame(frame) {
+      sprite.style.backgroundPosition = `-${frame * frameWidth}px 0px`;
+      currentFrame = frame;
     }
 
-    function animate(forward = true) {
+    function animate(toFrame) {
       if (animating) return;
       animating = true;
 
-      let i = forward ? 0 : totalFrames - 1;
-      const step = setInterval(() => {
-        setFrame(i);
-        i = forward ? i + 1 : i - 1;
+      const step = toFrame > currentFrame ? 1 : -1;
+      const framesToMove = Math.abs(toFrame - currentFrame);
+      const stepTime = duration / framesToMove;
 
-        if (i >= totalFrames || i < 0) {
-          clearInterval(step);
+      let frame = currentFrame;
+      const interval = setInterval(() => {
+        frame += step;
+        setFrame(frame);
+        if (frame === toFrame) {
+          clearInterval(interval);
           animating = false;
         }
-      }, 40); // 5 frames × 40ms = 200ms total
+      }, stepTime);
     }
 
-    // Hover animations (desktop)
-    folder.addEventListener("mouseenter", () => animate(true));
-    folder.addEventListener("mouseleave", () => animate(false));
-
-    // Click → hard redirect (mobile + desktop safe)
-    folder.addEventListener("click", () => {
-      window.location.href = "https://halo.forgebunker.com";
-      // using .href avoids sandbox behavior; it's a hard navigation
+    sprite.addEventListener("mouseenter", () => {
+      animate(frameCount - 1); // go to last frame
     });
+
+    sprite.addEventListener("mouseleave", () => {
+      animate(0); // return to first frame
+    });
+
+    sprite.addEventListener("click", () => {
+      window.location.href = "https://halo.forgebunker.com";
+    });
+
+    // initialize
+    setFrame(0);
   </script>
 </body>
 </html>
