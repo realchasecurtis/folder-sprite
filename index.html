@@ -14,20 +14,20 @@
     }
 
     .icon {
-      width: 80vw;              /* responsive width */
-      max-width: 300px;         /* cap on desktop */
-      aspect-ratio: 525 / 400;  /* keeps correct shape */
+      width: 40vw;              /* responsive: 40% of viewport */
+      max-width: 525px;         /* cap at native width */
+      aspect-ratio: 525 / 400;  /* lock proportions */
       background: url("folder-sprite.png") no-repeat 0 0;
       background-size: 500% auto; /* 5 frames across = 500% */
       cursor: pointer;
     }
 
-    /* Each frame uses percentage offsets */
+    /* Correct frame positions for 5 frames */
     .frame1 { background-position:   0% 0; }
-    .frame2 { background-position: -25% 0; }
-    .frame3 { background-position: -50% 0; }
-    .frame4 { background-position: -75% 0; }
-    .frame5 { background-position: -100% 0; }
+    .frame2 { background-position: -20% 0; }
+    .frame3 { background-position: -40% 0; }
+    .frame4 { background-position: -60% 0; }
+    .frame5 { background-position: -80% 0; }
   </style>
 </head>
 <body>
@@ -47,22 +47,24 @@
       animating = true;
 
       let i = forward ? 0 : frames.length - 1;
-      const interval = setInterval(() => {
+      const step = setInterval(() => {
         setFrame(i);
         i = forward ? i + 1 : i - 1;
 
         if (i >= frames.length || i < 0) {
-          clearInterval(interval);
+          clearInterval(step);
           animating = false;
         }
-      }, 40); // 40ms per frame
+      }, 40); // 5 frames * 40ms = 200ms total
     }
 
-    // Hover (desktop)
+    // Hover → open
     folder.addEventListener("mouseenter", () => animateFrames(true));
+
+    // Hover out → close
     folder.addEventListener("mouseleave", () => animateFrames(false));
 
-    // Click → hard redirect (mobile + desktop safe)
+    // Click → full-page redirect
     folder.addEventListener("click", () => {
       window.location.assign("https://halo.forgebunker.com");
     });
