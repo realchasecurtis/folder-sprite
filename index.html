@@ -21,22 +21,23 @@
       cursor: pointer;
     }
 
-    /* Animation definition */
+    /* Open (hover in) */
     @keyframes folderOpen {
       from { background-position:   0% 0; }  /* frame 1 */
       to   { background-position: 100% 0; }  /* frame 5 */
     }
 
-    .open {
-      animation: folderOpen 0.5s steps(4) forwards;
-    }
-
+    /* Close (hover out) */
     @keyframes folderClose {
       from { background-position: 100% 0; }  /* frame 5 */
       to   { background-position:   0% 0; }  /* frame 1 */
     }
 
-    .close {
+    .icon.open {
+      animation: folderOpen 0.5s steps(4) forwards;
+    }
+
+    .icon.close {
       animation: folderClose 0.5s steps(4) forwards;
     }
   </style>
@@ -46,26 +47,21 @@
 
   <script>
     const folder = document.getElementById("folder");
-    let isOpen = false;
 
+    // Animate on hover
+    folder.addEventListener("mouseenter", () => {
+      folder.classList.remove("close");
+      folder.classList.add("open");
+    });
+
+    folder.addEventListener("mouseleave", () => {
+      folder.classList.remove("open");
+      folder.classList.add("close");
+    });
+
+    // Redirect on click
     folder.addEventListener("click", () => {
-      if (!isOpen) {
-        folder.classList.remove("close");
-        folder.classList.add("open");
-
-        // Redirect after animation finishes
-        folder.addEventListener("animationend", () => {
-          if (isOpen === false) { // prevent double-firing
-            window.location.href = "https://forgebunker.com";
-          }
-        }, { once: true });
-
-        isOpen = true;
-      } else {
-        folder.classList.remove("open");
-        folder.classList.add("close");
-        isOpen = false;
-      }
+      window.location.href = "https://forgebunker.com";
     });
   </script>
 </body>
