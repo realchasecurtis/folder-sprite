@@ -13,38 +13,53 @@
     }
 
     .icon {
-      width: 498px;   /* max frame width */
-      height: 100px;  /* tallest frame height */
+      width: 100%;                /* responsive width */
+      max-width: 498px;           /* scale relative to container */
+      aspect-ratio: 498 / 300;    /* keep correct proportions */
       background: url("folder-sprite.png") no-repeat bottom left;
-      display: inline-block;
+      background-size: 500% 100%; /* 5 frames across → scale bg to 500% */
+      cursor: pointer;
     }
 
-    .icon:hover {
-      animation: playForward 0.6s forwards;
-    }
+    /* Default: closed (frame 1) */
+    .icon.frame1 { background-position: 0% 0; }
 
-    .icon:not(:hover) {
-      animation: playBackward 0.6s forwards;
-    }
+    /* Each frame step */
+    .icon.frame2 { background-position: -25% 0; }
+    .icon.frame3 { background-position: -50% 0; }
+    .icon.frame4 { background-position: -75% 0; }
+    .icon.frame5 { background-position: -100% 0; }
 
-    @keyframes playForward {
-      0%   { background-position:    0px 0; }      /* Frame 1 */
-      25%  { background-position: -548px 0; }      /* Frame 2 */
-      50%  { background-position: -1084.5px 0; }   /* Frame 3 */
-      75%  { background-position: -1613px 0; }     /* Frame 4 */
-      100% { background-position: -2130.75px 0; }  /* Frame 5 */
-    }
-
-    @keyframes playBackward {
-      0%   { background-position: -2130.75px 0; }
-      25%  { background-position: -1613px 0; }
-      50%  { background-position: -1084.5px 0; }
-      75%  { background-position: -548px 0; }
-      100% { background-position:    0px 0; }
+    /* Smooth stepping effect */
+    .icon {
+      transition: background-position 0.15s steps(1);
     }
   </style>
 </head>
 <body>
-  <div class="icon"></div>
+  <div class="icon frame1" id="folder"></div>
+
+  <script>
+    const folder = document.getElementById("folder");
+    let isOpen = false;
+
+    folder.addEventListener("click", () => {
+      if (!isOpen) {
+        // Animate forward
+        folder.className = "icon frame2";
+        setTimeout(() => folder.className = "icon frame3", 150);
+        setTimeout(() => folder.className = "icon frame4", 300);
+        setTimeout(() => folder.className = "icon frame5", 450);
+        isOpen = true;
+      } else {
+        // Animate backward
+        folder.className = "icon frame4";
+        setTimeout(() => folder.className = "icon frame3", 150);
+        setTimeout(() => folder.className = "icon frame2", 300);
+        setTimeout(() => folder.className = "icon frame1", 450);
+        isOpen = false;
+      }
+    });
+  </script>
 </body>
 </html>
