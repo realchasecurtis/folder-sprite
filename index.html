@@ -14,59 +14,51 @@
     }
 
     .icon {
-      width: 40vw;              /* responsive: 40% of viewport */
-      max-width: 525px;         /* cap at native width */
-      aspect-ratio: 525 / 400;  /* lock proportions */
+      width: min(40vw, 525px);   /* responsive, capped at native width */
+      aspect-ratio: 525 / 400;   /* keep proportions */
       background: url("folder-sprite.png") no-repeat 0 0;
-      background-size: 500% auto; /* 5 frames across = 500% */
+      background-size: 500% 100%; /* 5 frames across → 500% */
       cursor: pointer;
     }
-
-    /* Correct frame positions for 5 frames */
-    .frame1 { background-position:   0% 0; }
-    .frame2 { background-position: -20% 0; }
-    .frame3 { background-position: -40% 0; }
-    .frame4 { background-position: -60% 0; }
-    .frame5 { background-position: -80% 0; }
   </style>
 </head>
 <body>
-  <div class="icon frame1" id="folder"></div>
+  <div class="icon" id="folder"></div>
 
   <script>
     const folder = document.getElementById("folder");
-    const frames = ["frame1", "frame2", "frame3", "frame4", "frame5"];
+    const totalFrames = 5;
     let animating = false;
 
     function setFrame(index) {
-      folder.className = "icon " + frames[index];
+      const percent = -(100 / (totalFrames - 1)) * index;
+      folder.style.backgroundPosition = `${percent}% 0`;
     }
 
-    function animateFrames(forward = true) {
+    function animate(forward = true) {
       if (animating) return;
       animating = true;
 
-      let i = forward ? 0 : frames.length - 1;
+      let i = forward ? 0 : totalFrames - 1;
       const step = setInterval(() => {
         setFrame(i);
         i = forward ? i + 1 : i - 1;
 
-        if (i >= frames.length || i < 0) {
+        if (i >= totalFrames || i < 0) {
           clearInterval(step);
           animating = false;
         }
-      }, 40); // 5 frames * 40ms = 200ms total
+      }, 40); // 5 frames × 40ms = 200ms total
     }
 
-    // Hover → open
-    folder.addEventListener("mouseenter", () => animateFrames(true));
+    // Hover animations (desktop)
+    folder.addEventListener("mouseenter", () => animate(true));
+    folder.addEventListener("mouseleave", () => animate(false));
 
-    // Hover out → close
-    folder.addEventListener("mouseleave", () => animateFrames(false));
-
-    // Click → full-page redirect
+    // Click → hard redirect (mobile + desktop safe)
     folder.addEventListener("click", () => {
-      window.location.assign("https://halo.forgebunker.com");
+      window.location.href = "https://halo.forgebunker.com";
+      // using .href avoids sandbox behavior; it's a hard navigation
     });
   </script>
 </body>
