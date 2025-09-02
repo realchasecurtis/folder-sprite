@@ -16,22 +16,33 @@
       width: 100%;
       max-width: 498px;
       aspect-ratio: 498 / 300;
-      background: url("folder-sprite.png") no-repeat bottom left;
+      background: url("folder-sprite.png") no-repeat left center;
       background-size: 500% 100%; /* 5 frames across */
       cursor: pointer;
-      transition: background-position 0.15s steps(1);
     }
 
-    /* Corrected frame positions */
-    .icon.frame1 { background-position:   0% 0; }
-    .icon.frame2 { background-position:  25% 0; }
-    .icon.frame3 { background-position:  50% 0; }
-    .icon.frame4 { background-position:  75% 0; }
-    .icon.frame5 { background-position: 100% 0; }
+    /* Animation definition */
+    @keyframes folderOpen {
+      from { background-position:   0% 0; }  /* frame 1 */
+      to   { background-position: 100% 0; }  /* frame 5 */
+    }
+
+    .open {
+      animation: folderOpen 0.5s steps(4) forwards;
+    }
+
+    @keyframes folderClose {
+      from { background-position: 100% 0; }  /* frame 5 */
+      to   { background-position:   0% 0; }  /* frame 1 */
+    }
+
+    .close {
+      animation: folderClose 0.5s steps(4) forwards;
+    }
   </style>
 </head>
 <body>
-  <div class="icon frame1" id="folder"></div>
+  <div class="icon" id="folder"></div>
 
   <script>
     const folder = document.getElementById("folder");
@@ -39,21 +50,20 @@
 
     folder.addEventListener("click", () => {
       if (!isOpen) {
-        // Animate forward, then redirect
-        folder.className = "icon frame2";
-        setTimeout(() => folder.className = "icon frame3", 150);
-        setTimeout(() => folder.className = "icon frame4", 300);
-        setTimeout(() => {
-          folder.className = "icon frame5";
-          window.location.href = "https://forgebunker.com"; // Redirect here
-        }, 450);
+        folder.classList.remove("close");
+        folder.classList.add("open");
+
+        // Redirect after animation finishes
+        folder.addEventListener("animationend", () => {
+          if (isOpen === false) { // prevent double-firing
+            window.location.href = "https://forgebunker.com";
+          }
+        }, { once: true });
+
         isOpen = true;
       } else {
-        // Animate backward
-        folder.className = "icon frame4";
-        setTimeout(() => folder.className = "icon frame3", 150);
-        setTimeout(() => folder.className = "icon frame2", 300);
-        setTimeout(() => folder.className = "icon frame1", 450);
+        folder.classList.remove("open");
+        folder.classList.add("close");
         isOpen = false;
       }
     });
