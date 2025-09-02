@@ -13,32 +13,31 @@
     }
 
     .icon {
-      width: 100%;
-      max-width: 498px;
-      aspect-ratio: 498 / 300;
+      width: 498px;   /* single frame width */
+      height: 300px;  /* single frame height */
       background: url("folder-sprite.png") no-repeat left center;
-      background-size: 500% 100%; /* 5 frames across */
+      background-size: 2490px 300px; /* 498px × 5 frames */
       cursor: pointer;
     }
 
     /* Open (hover in) */
     @keyframes folderOpen {
-      from { background-position:   0% 0; }  /* frame 1 */
-      to   { background-position: 100% 0; }  /* frame 5 */
+      from { background-position:    0px 0; }   /* frame 1 */
+      to   { background-position: -1992px 0; }  /* frame 5 */
     }
 
     /* Close (hover out) */
     @keyframes folderClose {
-      from { background-position: 100% 0; }  /* frame 5 */
-      to   { background-position:   0% 0; }  /* frame 1 */
+      from { background-position: -1992px 0; }  /* frame 5 */
+      to   { background-position:    0px 0; }   /* frame 1 */
     }
 
     .icon.open {
-      animation: folderOpen 0.5s steps(4) forwards;
+      animation: folderOpen 0.2s steps(4) forwards;
     }
 
     .icon.close {
-      animation: folderClose 0.5s steps(4) forwards;
+      animation: folderClose 0.2s steps(4) forwards;
     }
   </style>
 </head>
