@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Folder Animation</title>
+  <style>
+    body {
+      background: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .icon {
+      width: 498px;   /* max frame width */
+      height: 100px;  /* tallest frame height */
+      background: url("sprite.png") no-repeat bottom left;
+      display: inline-block;
+    }
+
+    .icon:hover {
+      animation: playForward 0.6s forwards;
+    }
+
+    .icon:not(:hover) {
+      animation: playBackward 0.6s forwards;
+    }
+
+    @keyframes playForward {
+      0%   { background-position:    0px 0; }      /* Frame 1 */
+      25%  { background-position: -548px 0; }      /* Frame 2 */
+      50%  { background-position: -1084.5px 0; }   /* Frame 3 */
+      75%  { background-position: -1613px 0; }     /* Frame 4 */
+      100% { background-position: -2130.75px 0; }  /* Frame 5 */
+    }
+
+    @keyframes playBackward {
+      0%   { background-position: -2130.75px 0; }
+      25%  { background-position: -1613px 0; }
+      50%  { background-position: -1084.5px 0; }
+      75%  { background-position: -548px 0; }
+      100% { background-position:    0px 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="icon"></div>
+</body>
+</html>
