@@ -13,17 +13,16 @@
       margin: 0;
     }
 
-    a.icon {
-      display: block;
+    .icon {
       width: 80vw;              /* responsive width */
       max-width: 300px;         /* cap on desktop */
       aspect-ratio: 525 / 400;  /* keeps correct shape */
       background: url("folder-sprite.png") no-repeat 0 0;
-      background-size: 500% auto; /* 5 frames across → 500% */
+      background-size: 500% auto; /* 5 frames across = 500% */
       cursor: pointer;
     }
 
-    /* Each frame is a percentage step */
+    /* Each frame uses percentage offsets */
     .frame1 { background-position:   0% 0; }
     .frame2 { background-position: -25% 0; }
     .frame3 { background-position: -50% 0; }
@@ -32,7 +31,7 @@
   </style>
 </head>
 <body>
-  <a href="https://halo.forgebunker.com" target="_self" class="icon frame1" id="folder"></a>
+  <div class="icon frame1" id="folder"></div>
 
   <script>
     const folder = document.getElementById("folder");
@@ -56,11 +55,17 @@
           clearInterval(interval);
           animating = false;
         }
-      }, 40);
+      }, 40); // 40ms per frame
     }
 
+    // Hover (desktop)
     folder.addEventListener("mouseenter", () => animateFrames(true));
     folder.addEventListener("mouseleave", () => animateFrames(false));
+
+    // Click → hard redirect (mobile + desktop safe)
+    folder.addEventListener("click", () => {
+      window.location.assign("https://halo.forgebunker.com");
+    });
   </script>
 </body>
 </html>
