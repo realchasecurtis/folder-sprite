@@ -13,52 +13,73 @@
     }
 
     .icon {
-      width: 498px;   /* single frame width */
-      height: 300px;  /* single frame height */
-      background: url("folder-sprite.png") no-repeat left center;
-      background-size: 2490px 300px; /* 498px × 5 frames */
+      width: 525px;   /* single frame width */
+      height: 400px;  /* single frame height */
+      background: url("folder-sprite.png") no-repeat 0 0;
+      background-size: auto 400px; /* use full sprite width, keep height aligned */
       cursor: pointer;
     }
 
-    /* Open (hover in) */
-    @keyframes folderOpen {
-      from { background-position:    0px 0; }   /* frame 1 */
-      to   { background-position: -1992px 0; }  /* frame 5 */
-    }
-
-    /* Close (hover out) */
-    @keyframes folderClose {
-      from { background-position: -1992px 0; }  /* frame 5 */
-      to   { background-position:    0px 0; }   /* frame 1 */
-    }
-
-    .icon.open {
-      animation: folderOpen 0.2s steps(4) forwards;
-    }
-
-    .icon.close {
-      animation: folderClose 0.2s steps(4) forwards;
-    }
+    /* Explicit frames (spacing = 50px, so stride = 575px) */
+    .frame1 { background-position:    0px 0; }
+    .frame2 { background-position: -575px 0; }
+    .frame3 { background-position: -1150px 0; }
+    .frame4 { background-position: -1725px 0; }
+    .frame5 { background-position: -2300px 0; }
   </style>
 </head>
 <body>
-  <div class="icon" id="folder"></div>
+  <div class="icon frame1" id="folder"></div>
 
   <script>
     const folder = document.getElementById("folder");
+    const frames = ["frame1", "frame2", "frame3", "frame4", "frame5"];
+    let currentFrame = 0;
+    let animating = false;
 
-    // Animate on hover
-    folder.addEventListener("mouseenter", () => {
-      folder.classList.remove("close");
-      folder.classList.add("open");
-    });
+    // helper: switch frame
+    function setFrame(index) {
+      folder.className = "icon " + frames[index];
+      currentFrame = index;
+    }
 
-    folder.addEventListener("mouseleave", () => {
-      folder.classList.remove("open");
-      folder.classList.add("close");
-    });
+    // animate forward (open)
+    function animateOpen() {
+      if (animating) return;
+      animating = true;
+      let i = 0;
+      const interval = setInterval(() => {
+        setFrame(i);
+        i++;
+        if (i >= frames.length) {
+          clearInterval(interval);
+          animating = false;
+        }
+      }, 40); // faster: 40ms per frame ≈ 160ms total
+    }
 
-    // Redirect on click
+    // animate backward (close)
+    function animateClose() {
+      if (animating) return;
+      animating = true;
+      let i = frames.length - 1;
+      const interval = setInterval(() => {
+        setFrame(i);
+        i--;
+        if (i < 0) {
+          clearInterval(interval);
+          animating = false;
+        }
+      }, 40);
+    }
+
+    // Hover → animate open
+    folder.addEventListener("mouseenter", animateOpen);
+
+    // Hover out → animate close
+    folder.addEventListener("mouseleave", animateClose);
+
+    // Click → redirect
     folder.addEventListener("click", () => {
       window.location.href = "https://forgebunker.com";
     });
