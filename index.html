@@ -13,14 +13,15 @@
     }
 
     .icon {
-      width: 525px;   /* single frame width */
-      height: 400px;  /* single frame height */
+      width: 525px;   /* exact frame width */
+      height: 400px;  /* exact frame height */
       background: url("folder-sprite.png") no-repeat 0 0;
-      background-size: auto 400px; /* use full sprite width, keep height aligned */
+      /* don’t stretch sprite, use its natural width */
       cursor: pointer;
+      overflow: hidden;
     }
 
-    /* Explicit frames (spacing = 50px, so stride = 575px) */
+    /* Frame positions (stride = 575px) */
     .frame1 { background-position:    0px 0; }
     .frame2 { background-position: -575px 0; }
     .frame3 { background-position: -1150px 0; }
@@ -34,52 +35,31 @@
   <script>
     const folder = document.getElementById("folder");
     const frames = ["frame1", "frame2", "frame3", "frame4", "frame5"];
-    let currentFrame = 0;
     let animating = false;
 
-    // helper: switch frame
     function setFrame(index) {
       folder.className = "icon " + frames[index];
-      currentFrame = index;
     }
 
-    // animate forward (open)
-    function animateOpen() {
+    function animateFrames(forward = true) {
       if (animating) return;
       animating = true;
-      let i = 0;
+
+      let i = forward ? 0 : frames.length - 1;
       const interval = setInterval(() => {
         setFrame(i);
-        i++;
-        if (i >= frames.length) {
+        i = forward ? i + 1 : i - 1;
+
+        if (i >= frames.length || i < 0) {
           clearInterval(interval);
           animating = false;
         }
-      }, 40); // faster: 40ms per frame ≈ 160ms total
+      }, 40); // 40ms per frame ≈ 160ms total
     }
 
-    // animate backward (close)
-    function animateClose() {
-      if (animating) return;
-      animating = true;
-      let i = frames.length - 1;
-      const interval = setInterval(() => {
-        setFrame(i);
-        i--;
-        if (i < 0) {
-          clearInterval(interval);
-          animating = false;
-        }
-      }, 40);
-    }
+    folder.addEventListener("mouseenter", () => animateFrames(true));
+    folder.addEventListener("mouseleave", () => animateFrames(false));
 
-    // Hover → animate open
-    folder.addEventListener("mouseenter", animateOpen);
-
-    // Hover out → animate close
-    folder.addEventListener("mouseleave", animateClose);
-
-    // Click → redirect
     folder.addEventListener("click", () => {
       window.location.href = "https://forgebunker.com";
     });
