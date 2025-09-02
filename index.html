@@ -10,18 +10,19 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+      margin: 0;
     }
 
     .icon {
-      width: 525px;   /* single frame width */
-      height: 400px;  /* single frame height */
-      background: url("folder-sprite.png") no-repeat 0 0;
-      /* Don’t scale — use the PNG’s actual pixel dimensions */
+      width: 100%;           /* make it responsive */
+      max-width: 300px;      /* cap it for desktop */
+      aspect-ratio: 525 / 400; /* keeps frame ratio */
+      background: url("folder-sprite.png") no-repeat 0 0 / cover;
       cursor: pointer;
       overflow: hidden;
     }
 
-    /* Correct pixel offsets (stride = 575px) */
+    /* Frame positions (kept the same) */
     .frame1 { background-position:    0px 0; }
     .frame2 { background-position: -575px 0; }
     .frame3 { background-position: -1150px 0; }
@@ -54,18 +55,15 @@
           clearInterval(interval);
           animating = false;
         }
-      }, 40); // 40ms per frame → ~160ms total
+      }, 40);
     }
 
-    // Hover → open
     folder.addEventListener("mouseenter", () => animateFrames(true));
-
-    // Hover out → close
     folder.addEventListener("mouseleave", () => animateFrames(false));
 
-    // Click → redirect
+    // Force proper redirect
     folder.addEventListener("click", () => {
-      window.location.href = "https://halo.forgebunker.com";
+      window.open("https://halo.forgebunker.com", "_self");
     });
   </script>
 </body>
