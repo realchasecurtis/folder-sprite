@@ -2,78 +2,102 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Folder Sprite</title>
+  <title>Folder Sprites</title>
   <style>
     body {
       background: #111;
       display: flex;
       justify-content: center;
       align-items: center;
+      gap: 40px; /* space between folders */
       height: 100vh;
       margin: 0;
     }
 
     .sprite {
       width: 100%;
-      max-width: 525px;   /* keeps desktop sane */
+      max-width: 150px;   /* smaller for multiple side by side */
       aspect-ratio: 525 / 400;
-      background: url("folder-sprite.png") 0 0 no-repeat;
-      background-size: cover;
       cursor: pointer;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
     }
   </style>
 </head>
 <body>
-  <div class="sprite" id="folder"></div>
+  <!-- Halo Folder -->
+  <div class="sprite" 
+       data-prefix="halo" 
+       data-path="halo-sprite" 
+       data-frames="5" 
+       data-link="https://halo.forgebunker.com"></div>
+
+  <!-- OSRS Folder -->
+  <div class="sprite" 
+       data-prefix="osrs" 
+       data-path="osrs-sprite" 
+       data-frames="5" 
+       data-link="https://osrs.forgebunker.com"></div>
 
   <script>
-    const sprite = document.getElementById("folder");
+    document.querySelectorAll(".sprite").forEach(sprite => {
+      const prefix = sprite.dataset.prefix;
+      const path = sprite.dataset.path;
+      const frameCount = parseInt(sprite.dataset.frames, 10);
+      const link = sprite.dataset.link;
 
-    const frameWidth = 525;
-    const frameCount = 5;
-    const duration = 200; // ms for full animation
+      const duration = 200; // ms total
+      const images = [];
+      let currentFrame = 0;
+      let animating = false;
 
-    let currentFrame = 0;
-    let animating = false;
+      // Preload frames
+      for (let i = 1; i <= frameCount; i++) {
+        const img = new Image();
+        img.src = `${path}/${prefix}-frame-${i}.png`;
+        images.push(img.src);
+      }
 
-    function setFrame(frame) {
-      sprite.style.backgroundPosition = `-${frame * frameWidth}px 0px`;
-      currentFrame = frame;
-    }
+      function setFrame(frame) {
+        sprite.style.backgroundImage = `url(${images[frame]})`;
+        currentFrame = frame;
+      }
 
-    function animate(toFrame) {
-      if (animating) return;
-      animating = true;
+      function animate(toFrame) {
+        if (animating) return;
+        animating = true;
 
-      const step = toFrame > currentFrame ? 1 : -1;
-      const framesToMove = Math.abs(toFrame - currentFrame);
-      const stepTime = duration / framesToMove;
+        const step = toFrame > currentFrame ? 1 : -1;
+        const framesToMove = Math.abs(toFrame - currentFrame);
+        const stepTime = duration / framesToMove;
 
-      let frame = currentFrame;
-      const interval = setInterval(() => {
-        frame += step;
-        setFrame(frame);
-        if (frame === toFrame) {
-          clearInterval(interval);
-          animating = false;
-        }
-      }, stepTime);
-    }
+        let frame = currentFrame;
+        const interval = setInterval(() => {
+          frame += step;
+          setFrame(frame);
+          if (frame === toFrame) {
+            clearInterval(interval);
+            animating = false;
+          }
+        }, stepTime);
+      }
 
-    sprite.addEventListener("mouseenter", () => {
-      animate(frameCount - 1); // go to last frame
+      sprite.addEventListener("mouseenter", () => {
+        animate(frameCount - 1); // animate forward
+      });
+
+      sprite.addEventListener("mouseleave", () => {
+        animate(0); // animate backward
+      });
+
+      sprite.addEventListener("click", () => {
+        window.location.href = link;
+      });
+
+      // initialize first frame
+      setFrame(0);
     });
-
-    sprite.addEventListener("mouseleave", () => {
-      animate(0); // return to first frame
-    });
-
-    sprite.addEventListener("click", () => {
-      window.location.href = "https://halo.forgebunker.com";
-    });
-
-    // initialize
-    setFrame(0);
   </script>
 </body>
 </html>
